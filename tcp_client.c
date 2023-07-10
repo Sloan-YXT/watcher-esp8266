@@ -126,38 +126,44 @@ static void tcp_client_task(void *pvParameters)
         err = send(sock,&rlen,4,0);
         if (err < 0) {
             ESP_LOGE(TAG, "(%d)Error occured during sending: errno %d",__LINE__,errno);
-            break;
+            close(sock);
+            continue;
         }
         err = send(sock,name,len,0);
         sprintf(box,"name=%s\r\n",name);
         // uart_write_bytes(UART_NUM_0,box,100); 
         if (err < 0) {
             ESP_LOGE(TAG, "(%d)Error occured during sending: errno %d",__LINE__,errno);
-            break;
+            close(sock);
+            continue;
         }
         len = strlen((const char*)type);
         rlen = htonl(len);
         err = send(sock,&rlen,4,0);
         if (err < 0) {
             ESP_LOGE(TAG, "(%d)Error occured during sending: errno %d",__LINE__,errno);
-            break;
+            close(sock);
+            continue;
         }
         err = send(sock,type,len,0);
         if (err < 0) {
             ESP_LOGE(TAG, "(%d)Error occured during sending: errno %d",__LINE__,errno);
-            break;
+            close(sock);
+            continue;
         }
         len = strlen((const char*)position);
         rlen = htonl(len);
         err = send(sock,&rlen,4,0);
         if (err < 0) {
             ESP_LOGE(TAG, "Error occured during sending: errno %d", errno);
-            break;
+            close(sock);
+            continue;
         }
         err = send(sock,position,len,0);
         if (err < 0) {
             ESP_LOGE(TAG, "(%d)Error occured during sending: errno %d",__LINE__,errno);
-            break;
+            close(sock);
+            continue;
         }
         ESP_LOGI(TAG, "Successfully connected");
         while (1) {
@@ -172,26 +178,31 @@ static void tcp_client_task(void *pvParameters)
             err = send(sock,&rlen,4,0);
             if (err < 0) {
                 ESP_LOGE(TAG, "Error occured during sending: errno %d", errno);
+                close(sock);
                 break;
             }
             err = send(sock,temp,17, 0);
             if (err < 0) {
                 ESP_LOGE(TAG, "(%d)Error occured during sending: errno %d",__LINE__,errno);
+                close(sock);
                 break;
             }
             err = send(sock,humi,17, 0);
             if (err < 0) {
                 ESP_LOGE(TAG, "(%d)Error occured during sending: errno %d",__LINE__,errno);
+                close(sock);
                 break;
             }
             err = send(sock,light,1, 0);
             if (err < 0) {
                 ESP_LOGE(TAG, "(%d)Error occured during sending: errno %d",__LINE__,errno);
+                close(sock);
                 break;
             }
             err = send(sock,smoke,1, 0);
             if (err < 0) {
                 ESP_LOGE(TAG, "(%d)Error occured during sending: errno %d",__LINE__,errno);
+                close(sock);
                 break;
             }
             // len = recv(sock, rx_buffer, sizeof(rx_buffer) - 1, 0);
